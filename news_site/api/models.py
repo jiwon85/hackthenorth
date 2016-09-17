@@ -13,26 +13,8 @@ class ArticleInfo(models.Model):
 	topic_id = models.ForeignKey('Topic', on_delete=models.CASCADE)
 
 class Topic(models.Model):
-	CATEGORY_POLITICS = 0
-	CATEGORY_SPORTS = 1
-	CATEGORY_BUSINESS = 2
-	CATEGORY_ENTERTAINMENT = 3
-	CATEGORY_TECHNOLOGY = 4
-	CATEGORY_HEALTH = 5
-	CATEGORY_SCIENCE = 6
-	CATEGORY_OTHER = 7
-	CATEGORY_CHOICES = (
-	    (CATEGORY_POLITICS, 'politics'),
-	    (CATEGORY_SPORTS, 'sports'),
-	    (CATEGORY_BUSINESS, 'business'),
-	    (CATEGORY_ENTERTAINMENT, 'entertainent'),
-	    (CATEGORY_TECHNOLOGY, 'technology'),
-	    (CATEGORY_HEALTH, 'health'),
-	    (CATEGORY_SCIENCE, 'science'),
-    	(CATEGORY_OTHER, 'other')
-	)
 
 	topic_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	topic_name = models.CharField(max_length=50)
-	category_name = models.SmallIntegerField(choices=CATEGORY_CHOICES, default=CATEGORY_OTHER)
+	category_name = models.CharField(max_length=20)
 	hotness_score = models.SmallIntegerField(default=0)
