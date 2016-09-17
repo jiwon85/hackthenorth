@@ -1,12 +1,16 @@
-pip install virtualenv
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    brew install python3
+fi
+
+pip3 install virtualenv
 # Create the virtual env in a directory outside our github repo
 cd ../
-virtualenv venv_hackthenorth
+virtualenv -p python3 venv_hackthenorth
 source venv_hackthenorth/bin/activate
 
 # Install packages
 cd hackthenorth/
-pip install -r req.txt
+pip3 install -r req.txt
 
 # Install news paper packages prereqs
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
@@ -20,5 +24,6 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     brew install libtiff libjpeg webp little-cms2
 fi
 
-pip install newspaper
+pip3 install ipython
+pip3 install newspaper3k
 curl https://raw.githubusercontent.com/codelucas/newspaper/master/download_corpora.py | python2.7
