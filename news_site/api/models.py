@@ -65,3 +65,4 @@ class Topic(models.Model):
 	topic_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	topic_name = models.CharField(max_length=50)
 	category_name = models.SmallIntegerField(choices=CATEGORY_CHOICES, default=CATEGORY_OTHER)
+	hotness_score = models.SmallIntegerField(default=0)
