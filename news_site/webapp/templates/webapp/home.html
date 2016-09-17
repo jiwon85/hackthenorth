@@ -1,5 +1,6 @@
-<!DOCTYPE html>
+{% load static %}
 
+<!DOCTYPE html>
 <html>
   <head>
   	<title>NewsAlligator</title>
@@ -11,8 +12,12 @@
 
 	<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/ngInfiniteScroll/1.3.0/ng-infinite-scroll.min.js'></script>
 	<script type='text/javascript' src="../js/home.js"></script>
+  	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'webapp/css/home.css' %}">
+    <script src="{% static 'webapp/js/home.js' %}"></script>
 
-    
   </head>
   <body ng-app="newsApp">
 	<div ng-controller="HomeController">
