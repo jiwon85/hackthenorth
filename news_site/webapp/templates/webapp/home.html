@@ -6,18 +6,18 @@
   	<title>NewsAlligator</title>
 
   	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  	<script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
+	<script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script type='text/javascript' src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/ngInfiniteScroll/1.3.0/ng-infinite-scroll.min.js'></script>
+	{% load staticfiles %}
     <link rel="stylesheet" href="{% static 'webapp/css/home.css' %}">
-    <script src="{% static 'webapp/js/home.js' %}"></script>
+    <script type='text/javascript' src="{% static 'webapp/js/home.js' %}"></script>
 
   </head>
+  {% verbatim %}
   <body ng-app="newsApp">
 	<div ng-controller="HomeController">
-
-
-
 		<nav class="navbar navbar-default">
 		  <div class="container-fluid">
 		    <!-- Brand and toggle get grouped for better mobile display -->
@@ -52,9 +52,6 @@
 		  </div><!-- /.container-fluid -->
 		</nav>
 
-
-  
-		
  		Status: {{ loginstatus }}
  		<br>
  		{{ welcome }} 
@@ -88,7 +85,25 @@
 		  </div>
 		</div>
 
-		
+		<div infinite-scroll='loadMore()' infinite-scroll-distance='10'>
+    		<div ng-repeat="topic in feed">
+    		  <h3>
+    		  	Topic goes here 
+    		  	 <button type="button" class=".btn-default pull-right" ng-click="showDetails = ! showDetails">Hide</button>
+    		  </h3>
+
+    		  <div ng-repeat="article in topic" ng-show="showDetails">
+				  <b>Title: {{article.title}}</b>
+				  <br/>
+				  Source: UTvCAL
+				  <br/>
+				  Summary: {{article.snippet}}
+			  </div>
+			  <hr>
+			</div>
+  		</div>
+			
 	</div>
   </body>
+  {% endverbatim %}
 </html>
