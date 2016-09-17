@@ -86,12 +86,20 @@
 		</div>
 
 		<div infinite-scroll='loadMore()' infinite-scroll-distance='10'>
-    		<div ng-repeat="article in feed">
-			  <b>Title: {{article.title}}</b>
-			  <br>
-			  Source: UTvCAL
-			  <br>
-			  Summary: {{article.snippet}}
+    		<div ng-repeat="topic in feed">
+    		  <h3>
+    		  	Topic goes here 
+    		  	 <button type="button" class=".btn-default pull-right" ng-click="showDetails = ! showDetails">Hide</button>
+    		  </h3>
+
+    		  <div ng-repeat="article in topic" ng-show="showDetails">
+				  <b>Title: {{article.title}}</b>
+				  <br/>
+				  Source: UTvCAL
+				  <br/>
+				  Summary: {{article.snippet}}
+			  </div>
+			  <hr>
 			</div>
   		</div>
 			

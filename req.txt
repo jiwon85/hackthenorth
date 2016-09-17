@@ -1,5 +1,6 @@
 Django
 django-angular
+djangorestframework
 sumy
 scrapy
 ipython
