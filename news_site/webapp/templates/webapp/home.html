@@ -34,17 +34,51 @@
 		    <!-- Collect the nav links, forms, and other content for toggling -->
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
-		        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-		        <li><a href="#">Link</a></li>
+		      	<li><span class="label label-default">Filter:</span></li> <!--fix align-->
+		        <li class="dropdown">
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories<span class="caret"></span></a>
+		          <ul class="dropdown-menu categories">
+		            <li><input type="checkbox" value="POLITICS" checked/>&nbsp;POLITICS</li>
+				    <li><input type="checkbox" value="BUSINESS" checked/>&nbsp;BUSINESS</li>
+				    <li><input type="checkbox" value="HEALTH" checked/>&nbsp;HEALTH</li>
+				    <li><input type="checkbox" value="ENTERTAINMENT" checked/>&nbsp;ENTERTAINMENT</li>
+				    <li><input type="checkbox" value="SPORTS" checked/>&nbsp;SPORTS</li>
+				    <li><input type="checkbox" value="TECHNOLOGY" checked/>&nbsp;TECHNOLOGY</li>
+				    <li><input type="checkbox" value="SCIENCE" checked/>&nbsp;SCIENCE</li>
+				    <li><input type="checkbox" value="OTHER" checked/>&nbsp;OTHER</li>
+		          </ul>
+		        </li>
+		        <li class="dropdown">
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sources<span class="caret"></span></a>
+		          <ul class="dropdown-menu sources">
+		            <li><input type="checkbox" value="cnn" checked/>&nbsp;CNN</li>
+				    <li><input type="checkbox" value="yahoo" checked/>&nbsp;YAHOO</li>
+				    <li><input type="checkbox" value="nytimes" checked/>&nbsp;NY TIMES</li>
+				    <li><input type="checkbox" value="huffingtonpost" checked/>&nbsp;HUFFINGTON POST</li>
+				    <li><input type="checkbox" value="foxnews" checked/>&nbsp;FOX NEWS</li>
+				    <li><input type="checkbox" value="nbcnews" checked/>&nbsp;NBC NEWS</li>
+				    <li><input type="checkbox" value="dailymail" checked/>&nbsp;DAILY MAIL</li>
+				    <li><input type="checkbox" value="washingtonpost" checked/>&nbsp;WASHINGTON POST</li>
+				    <li><input type="checkbox" value="theguardian" checked/>&nbsp;THE GUARDIAN</li>
+				    <li><input type="checkbox" value="wsj" checked/>&nbsp;WSJ</li>
+
+		          </ul>
+		        </li>
+		        <li><span class="label label-default">Sort:</span></li> <!--fix align-->
+		        <li class="dropdown">
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sources<span class="caret"></span></a>
+		          <ul class="dropdown-menu dropdown-menu-form"> <!--fix single selection-->
+					<li><label><input type="radio">Latest</label></li>
+					<li><label><input type="radio">Hottest</label></li>
+				  </ul>
+		        </li>
+		        <li>
+		        <button type="submit" class="btn btn-default" ng-click="httpGetAsync()">Update Results</button>
+		      </li>
 		      </ul>
-		      <form class="navbar-form navbar-left">
-		        <div class="form-group">
-		          <input type="text" class="form-control" placeholder="Search">
-		        </div>
-		        <button type="submit" class="btn btn-default">Submit</button>
-		      </form>
+		      
 		      <ul class="nav navbar-nav navbar-right">
-		      	<li>{{ welcome }}</li>
+		      	<li>{{ welcome }}</li> <!--fix align-->
 		      	<li role="separator" class="divider"></li>
 		        <button type="button" class="btn btn-info btn-lg pull-right" data-toggle="modal" data-target="#myModal">Login</button>
 		      </ul>
@@ -85,8 +119,8 @@
 		  </div>
 		</div>
 
-		<div infinite-scroll='loadMore()' infinite-scroll-distance='10'>
-    		<div ng-repeat="topic in feed">
+		<div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
+    		<div ng-repeat="topic in shownFeed">
     		  <h3>
     		  	Topic goes here 
     		  	 <button type="button" class=".btn-default pull-right" ng-click="showDetails = ! showDetails">Hide</button>
@@ -95,9 +129,7 @@
     		  <div ng-repeat="article in topic" ng-show="showDetails">
 				  <b>Title: {{article.title}}</b>
 				  <br/>
-				  Source: UTvCAL
-				  <br/>
-				  Summary: {{article.snippet}}
+				  Summary: {{article.summary}}
 			  </div>
 			  <hr>
 			</div>

@@ -8,14 +8,9 @@ myApp.controller('HomeController', ['$scope', function($scope) {
   	username: "",
   	password: ""
   };
-  var title = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi auctor.";
-  var snippet = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sagittis est nec accumsan auctor. Aliquam sollicitudin mollis mi vel pretium. Praesent tellus risus, pulvinar nec commodo eu, egestas eu purus. Nulla feugiat, dui nec tristique ornare, nunc lectus auctor libero, venenatis tincidunt nunc nibh at elit. Donec eu congue ligula, et tincidunt arcu. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nulla porta lobortis suscipit. Aliquam sed eros quis enim blandit vehicula. Integer ac nulla non massa vehicula pulvinar. Aenean varius nisi non odio ultricies, sit amet iaculis nisi porta.";
-  $scope.feed = [
-    [{title: "1"+title, snippet: "1"+snippet},
-    {title: "2"+title, snippet: "2"+snippet},
-    {title: "3"+title, snippet: "3"+snippet},
-    {title: "4"+title, snippet: "4"+snippet}]];
-  $scope.count = 5;
+  $scope.feed = [];
+  $scope.shownFeed = [];
+  $scope.count = 1;
 
 
   $scope.login = function() {
@@ -30,13 +25,70 @@ myApp.controller('HomeController', ['$scope', function($scope) {
 
   $scope.loadMore = function() {
     //make api call to load more
-    newScope = $scope.count+40;
-    temp = []
-    while($scope.count <= newScope) {
-    	temp.push({title:$scope.count+title, snippet:$scope.count+snippet});
-    	$scope.count++;
+    if($scope.count<=$scope.feed.length){
+      $scope.shownFeed.push($scope.feed[$scope.count]);
+      $scope.count++;
     }
-    $scope.feed.push(temp);
+  };
+
+  $scope.populateFeed = function(response) {
+    console.log(response);
+    response = JSON.parse(response);
+    console.log(response);
+    console.log(response.length);
+    for(i=0; i<response.length; i++) {
+      topic = response[i];
+      topicDetails = topic[0] //where to store this?
+      articles = topic[1]
+      console.log("articles length " + articles.length);
+      $scope.feed.push(articles);
+    }
+    if($scope.feed.length > 0) {
+      $scope.shownFeed.push($scope.feed[0]);
+      $scope.$apply();
+    }
 
   };
+
+  $scope.httpGetAsync = function() {
+        $scope.feed=[];
+        $scope.shownFeed=[];
+        url = window.location+"api/v1/articles";
+        callback = $scope.populateFeed;
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                callback(xmlHttp.responseText);
+        }
+        xmlHttp.open("GET", url, true); // true for asynchronous 
+        categories = [];
+        $('.categories li input:checkbox:checked').each(function () {
+          console.log("hi");
+          var sThisVal = (this.checked ? $(this).val() : null);
+          if(sThisVal) {
+            categories.push(sThisVal);
+          }
+        });
+        console.log(categories);
+        sources = [];
+        $('.sources li input:checkbox:checked').each(function () {
+          console.log("hi");
+          var sThisVal = (this.checked ? $(this).val() : null);
+          if(sThisVal) {
+            sources.push(sThisVal);
+          }
+        });
+        console.log(sources);
+        xmlHttp.send(JSON.stringify(categories), JSON.stringify(sources));
+  };
+
+  $(document).ready(function() {
+    $scope.httpGetAsync();
+  });
+
 }]);
+
+
+
+
+
