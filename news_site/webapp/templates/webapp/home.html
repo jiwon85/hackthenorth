@@ -17,7 +17,7 @@
   </head>
   {% verbatim %}
   <body ng-app="newsApp">
-	<div ng-controller="HomeController">
+      <div ng-controller="HomeController" class='App' ng-style="{'background-color':'#ccc'}">
 		<nav class="navbar navbar-default">
 		  <div class="container-fluid">
 		    <!-- Brand and toggle get grouped for better mobile display -->
@@ -38,29 +38,27 @@
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories<span class="caret"></span></a>
 		          <ul class="dropdown-menu categories">
-		            <li><input type="checkbox" value="POLITICS" checked/>&nbsp;POLITICS</li>
-				    <li><input type="checkbox" value="BUSINESS" checked/>&nbsp;BUSINESS</li>
-				    <li><input type="checkbox" value="HEALTH" checked/>&nbsp;HEALTH</li>
-				    <li><input type="checkbox" value="ENTERTAINMENT" checked/>&nbsp;ENTERTAINMENT</li>
-				    <li><input type="checkbox" value="SPORTS" checked/>&nbsp;SPORTS</li>
-				    <li><input type="checkbox" value="TECHNOLOGY" checked/>&nbsp;TECHNOLOGY</li>
-				    <li><input type="checkbox" value="SCIENCE" checked/>&nbsp;SCIENCE</li>
-				    <li><input type="checkbox" value="OTHER" checked/>&nbsp;OTHER</li>
+		            <li><input type="checkbox" ng-click='httpGetAsync()'  value="politics" checked/>&nbsp;Politics</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="business" checked/>&nbsp;Business</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="entertainment" checked/>&nbsp;Entertainment</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="sports" checked/>&nbsp;Sports</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="science" checked/>&nbsp;Science</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="other" checked/>&nbsp;Other</li>
 		          </ul>
 		        </li>
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sources<span class="caret"></span></a>
 		          <ul class="dropdown-menu sources">
-		            <li><input type="checkbox" value="cnn" checked/>&nbsp;CNN</li>
-				    <li><input type="checkbox" value="yahoo" checked/>&nbsp;YAHOO</li>
-				    <li><input type="checkbox" value="nytimes" checked/>&nbsp;NY TIMES</li>
-				    <li><input type="checkbox" value="huffingtonpost" checked/>&nbsp;HUFFINGTON POST</li>
-				    <li><input type="checkbox" value="foxnews" checked/>&nbsp;FOX NEWS</li>
-				    <li><input type="checkbox" value="nbcnews" checked/>&nbsp;NBC NEWS</li>
-				    <li><input type="checkbox" value="dailymail" checked/>&nbsp;DAILY MAIL</li>
-				    <li><input type="checkbox" value="washingtonpost" checked/>&nbsp;WASHINGTON POST</li>
-				    <li><input type="checkbox" value="theguardian" checked/>&nbsp;THE GUARDIAN</li>
-				    <li><input type="checkbox" value="wsj" checked/>&nbsp;WSJ</li>
+		            <li><input type="checkbox" ng-click='httpGetAsync()'  value="cnn" checked/>&nbsp;CNN</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="yahoo" checked/>&nbsp;Yahoo</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="nytimes" checked/>&nbsp;NY Times</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="huffingtonpost" checked/>&nbsp;Huffington Post</li>
+				    <li><input type="checkbox"  ng-click='httpGetAsync()' value="foxnews" checked/>&nbsp;Fox News</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="nbcnews" checked/>&nbsp;NBC News</li>
+				    <li><input type="checkbox"  ng-click='httpGetAsync()' value="dailymail" checked/>&nbsp;Daily Mail</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()'  value="washingtonpost" checked/>&nbsp;Washington Post</li>
+				    <li><input type="checkbox"  ng-click='httpGetAsync()' value="theguardian" checked/>&nbsp;The Guardian</li>
+				    <li><input type="checkbox" ng-click='httpGetAsync()' value="wsj" checked/>&nbsp;WSJ</li>
 
 		          </ul>
 		        </li>
@@ -68,13 +66,10 @@
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sources<span class="caret"></span></a>
 		          <ul class="dropdown-menu dropdown-menu-form"> <!--fix single selection-->
-					<li><label><input type="radio">Latest</label></li>
-					<li><label><input type="radio">Hottest</label></li>
+					<li><label><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' value='date'>&nbsp;Latest</label></li>
+					<li><label><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' value='hotness_score'>&nbsp;Hottest</label></li>
 				  </ul>
 		        </li>
-		        <li>
-		        <button type="submit" class="btn btn-default" ng-click="httpGetAsync()">Update Results</button>
-		      </li>
 		      </ul>
 		      
 		      <ul class="nav navbar-nav navbar-right">
@@ -86,8 +81,6 @@
 		  </div><!-- /.container-fluid -->
 		</nav>
 
- 		Status: {{ loginstatus }}
- 		<br>
  		{{ welcome }} 
 		<!-- Modal -->
 		<div id="myModal" class="modal fade" role="dialog">
@@ -119,19 +112,21 @@
 		  </div>
 		</div>
 
-		<div infinite-scroll='loadMore()' infinite-scroll-distance='1'>
-    		<div ng-repeat="topic in shownFeed">
-    		  <h3>
-    		  	Topic goes here 
-    		  	 <button type="button" class=".btn-default pull-right" ng-click="showDetails = ! showDetails">Hide</button>
-    		  </h3>
-
-    		  <div ng-repeat="article in topic" ng-show="showDetails">
-				  <b>Title: {{article.title}}</b>
-				  <br/>
-				  Summary: {{article.summary}}
-			  </div>
-			  <hr>
+		<div infinite-scroll='loadMore()' infinite-scroll-distance='1' class='feedBoard'>
+    		<div ng-repeat="topic in shownFeed" class='topic-item'>
+              <h4><b>{{topic.title}}</b></h4>
+              <div class='topic-content'>
+                  <div ng-if='topic.image_url' class='topic-image'>
+                    <img src={{topic.image_url}} width="150">
+                  </div>
+                  <div class='topic-details'>
+                      <div class='topic-summary'>{{topic.summary}}</div>
+                      <p>
+                        From:
+                        <span ng-repeat="article in topic.articles">{{article.source}} </span>
+                    </p>
+                  </div>
+              </div>
 			</div>
   		</div>
 			

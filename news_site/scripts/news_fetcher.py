@@ -18,40 +18,38 @@ NEWS_SOURCES = {
     'cnn': {
         'url': 'http://www.cnn.com/',
     },
+    'nytimes': {
+        'url': 'http://www.nytimes.com/',
+    },
+
+    'huffingtonpost': {
+        'url': 'http://www.huffingtonpost.com/the-news/',
+    },
+
+    'foxnews': {
+        'url': 'http://www.foxnews.com/',
+    },
+
+    'nbcnews': {
+        'url': 'http://www.nbcnews.com/',
+    },
+
+    'dailymail': {
+        'url': 'http://www.dailymail.co.uk/home/index.html',
+    },
+
+    'washingtonpost': {
+        'url': 'https://www.washingtonpost.com/',
+    },
+
+    'theguardian': {
+        'url': 'https://www.theguardian.com/international',
+    },
+
+    'wsj': {
+        'url': 'http://www.wsj.com/',
+    }
 }
-'''
-'nytimes': {
-    'url': 'http://www.nytimes.com/',
-},
-
-'huffingtonpost': {
-    'url': 'http://www.huffingtonpost.com/the-news/',
-},
-
-'foxnews': {
-    'url': 'http://www.foxnews.com/',
-},
-
-'nbcnews': {
-    'url': 'http://www.nbcnews.com/',
-},
-
-'dailymail': {
-    'url': 'http://www.dailymail.co.uk/home/index.html',
-},
-
-'washingtonpost': {
-    'url': 'https://www.washingtonpost.com/',
-},
-
-'theguardian': {
-    'url': 'https://www.theguardian.com/international',
-},
-
-'wsj': {
-    'url': 'http://www.wsj.com/',
-},
-'''
 
 PATTERN = re.compile('[^a-zA-Z0-9\s]+')
 
@@ -65,7 +63,7 @@ def news_article_filter(article):
         return False
 
     # Test for data completeness
-    if article.summary is None or article.title is None:
+    if article.text is None or article.title is None or article.text == '':
         return False
 
     # Test for news up to date (within a week)
@@ -77,6 +75,11 @@ def news_article_filter(article):
 
 
 def process_news_article(news_site, article):
+    try:
+        article.parse()
+    except:
+        return None
+
     if not news_article_filter(article):
         return None
 
@@ -85,17 +88,20 @@ def process_news_article(news_site, article):
     except:
         return None
 
-    return {
+    ret = {
         'title': article.title,
         'date': article.publish_date,
         'summary': article.summary,
         'text': article.text,
         'article_url': article.url,
         'image_url': article.top_image,
-        'video_url': article.movies[0] if len(article.movies) > 0 else None,
-        'author': ','.join(article.authors),
+        'video_url': article.movies[0] if article.movies is not None and len(article.movies) > 0 else None,
+        'author': ','.join(article.authors) if article.authors is not None else None,
         'source': news_site,
+        'category': categorize_news(news_site, article),
     }
+
+    return ret
 
 def build_news_site_paper(news_site, url):
     # Build the news paper source
@@ -111,9 +117,9 @@ def build_news_site_paper(news_site, url):
     paper.parse_categories()
     paper.set_feeds()
     paper.download_feeds()
-    paper.generate_articles(limit=100)
+    paper.generate_articles(limit=200)
     paper.download_articles(threads=4)
-    paper.parse_articles()
+    # paper.parse_articles()
 
     return paper
 
@@ -126,9 +132,13 @@ def fetch_news_site_articles(news_site, url):
     for i, article in enumerate(paper.articles):
         print('Currently Process ' + news_site + '. Progress ' + str(i) + '/' + str(len(paper.articles)))
 
-        processed_article = process_news_article(news_site, article)
-        if processed_article is not None:
-            ret.append(processed_article)
+        try:
+            processed_article = process_news_article(news_site, article)
+            if processed_article is not None:
+                ret.append(processed_article)
+        except Exception as e:
+            print(e)
+            pass
 
     return ret
 
@@ -138,7 +148,7 @@ def get_topics(articles):
 
     try:
         tfidf = TfidfVectorizer().fit_transform(
-            map(lambda a: clean_text(a['text']), articles))
+            map(lambda a: clean_text(a.get('text', '')), articles))
 
         pairwise_similarity = tfidf * tfidf.T
     except:
@@ -175,13 +185,14 @@ def get_topics(articles):
 
 
 def dump_data(topics, articles):
-    import pdb; pdb.set_trace()
     # Delete all old records (this removes articles as well)
     Topic.objects.all().delete()
 
     # Insert topics
     for topic in topics:
+        topic_category = categorize_topic(articles, topic['articles'])
         t = Topic(
+            category_name=topic_category,
             hotness_score=len(topic['articles'])
         )
         t.save()
@@ -210,12 +221,74 @@ def job():
         news_site_articles = fetch_news_site_articles(news_site, url)
         print (news_site + ' has ' + str(len(news_site_articles)) + ' news')
         articles += news_site_articles
-
+    print ('Generating all topics...')
     topics = get_topics(articles)
+    print ('Dumping data...')
     dump_data(topics, articles)
 
 def run(*args):
     try:
         job()
     except Exception as e:
-        import pdb; pdb.set_trace()
+        print(e)
+        import ipdb; ipdb.set_trace()
+
+
+
+# For news categorization
+CATEGORIES = {
+    'politics': set([
+        'politics', 'politic', ''
+    ]),
+    'business': set([
+        'business', 'finance', 'money', 'moneybeat',
+        'economy'
+    ]),
+    'sports': set([
+        'sport',
+        'sports',
+        'football'
+    ]),
+    'entertainment': set([
+        'tv',
+        'entertainment',
+        'style',
+        'celebrity',
+    ]),
+    'science': set([
+        'earth',
+        'science',
+        'future',
+        'technology',
+        'tech',
+        'gadgets'
+    ])
+}
+
+WORDS_PATTERN = re.compile('[^a-zA-Z\s]+')
+def categorize_news(site, article):
+    # We know cnn news url contains the category in it
+    url_words = (' '.join(PATTERN.sub(' ', article.url).split(' '))).split(' ')
+    scores = {key: 0 for key in CATEGORIES.keys()}
+
+    for word in url_words:
+        for category, key_words in CATEGORIES.items():
+            if word in key_words:
+                scores[category] += 1
+    category_found = None
+
+    for category, score in scores.items():
+        if score > 0:
+            if category_found is None or score > scores[category_found]:
+                category_found = category
+
+    return category_found if category_found is not None else 'other'
+
+
+def categorize_topic(articles, indices):
+    category = 'other'
+    for idx in indices:
+        article = articles[idx]
+        if article['category'] != category:
+            category = article['category']
+    return category

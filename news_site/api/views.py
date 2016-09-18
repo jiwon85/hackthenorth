@@ -25,7 +25,7 @@ def get_articles(request):
 def _get_topic_articles(categories_filter, source_filter):
     # Do some filtering here with regard to categories
     topics = []
-    for topic in Topic.objects.all():
+    for topic in Topic.objects.filter(category_name__in=categories_filter).all():
 
         articles = []
         for a in topic.articleinfo_set.filter(source__in=source_filter).all():

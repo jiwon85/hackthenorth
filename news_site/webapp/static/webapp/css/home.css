@@ -1,0 +1,39 @@
+.feedBoard {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.topic-item{
+    background-color: white;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.label.label-default {
+    position: relative;
+    top: 14px;
+}
+
+.topic-summary {
+    color: #777;
+}
+
+body {
+    background-color: #ddd;
+}
+
+ul.dropdown-menu li {
+    padding: 0px 10px;
+}
+
+.topic-image {
+    display: inline-block;
+}
+.topic-details {
+    margin-left: 10px;
+    display: inline-block;
+}
+.topic-content {
+    display: flex;
+}
