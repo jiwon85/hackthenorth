@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.forms.models import model_to_dict
+
 from rest_framework.decorators import api_view
 from api.models import ArticleInfo, Topic
 from django.core import serializers
@@ -11,28 +13,19 @@ def index(request):
 
 @api_view(['GET'])  # how to load more?
 def get_articles(request):
-
-	topics = []	
-	for topic in Topic.objects.all():
-		articles = []
-		for a in ArticleInfo.objects.all().filter(topic_id=topic):
-			articles.append(_model_to_dict(a))
-		topic_list_tuple = (_model_to_dict(topic), articles)
-		topics.append(topic_list_tuple)
+    topics = _get_topic_articles({}, {})
+    return JsonResponse(topics, safe=False)
 
 
-	# for a in ArticleInfo.objects.all():
-	# 	print(a.__dict__)
+def _get_topic_articles(categories_filter, source_filter):
+    # Do some filtering here with regard to categories
+    topics = []
+    for topic in Topic.objects.all():
+        articles = []
+        for a in topic.articleinfo_set.all():
+            articles.append(model_to_dict(a))
+        topic_list_tuple = (model_to_dict(topic), articles)
+        topics.append(topic_list_tuple)
+    return topics
 
-	# arr = []
-	# for a in ArticleInfo.objects.all():
-	# 	arr.append(a)
-	# print(arr)
-	# request should have user ID, maybe dates
-	
-	return JsonResponse(topics, safe=False)
 
-def _model_to_dict(model):
-	dic = model.__dict__
-	del dic['_state']
-	return dic

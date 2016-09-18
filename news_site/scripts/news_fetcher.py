@@ -65,10 +65,13 @@ def news_article_filter(article):
         return False
 
     # Test for data completeness
+    if article.summary is None or article.title is None:
+        return False
+
     # Test for news up to date (within a week)
     if article.publish_date is not None and \
-        (NOW - article.publish_date.replace(tzinfo=None)).days > 14:
-        return True
+        (NOW - article.publish_date.replace(tzinfo=None)).days > 21:
+        return False
 
     return True
 
@@ -173,11 +176,31 @@ def get_topics(articles):
 
 def dump_data(topics, articles):
     import pdb; pdb.set_trace()
-    for article in articles:
-        a = ArticleInfo()
+    # Delete all old records (this removes articles as well)
+    Topic.objects.all().delete()
 
+    # Insert topics
     for topic in topics:
-        pass
+        t = Topic(
+            hotness_score=len(topic['articles'])
+        )
+        t.save()
+
+        # Insert articles
+        for idx in topic['articles']:
+            article = articles[idx]
+            a = ArticleInfo(
+                summary=article['summary'],
+                article_url=article['article_url'],
+                video_url=article['video_url'],
+                image_url=article['image_url'],
+                date=article['date'],
+                author=article['author'],
+                source=article['source'],
+                title=article['title'],
+            )
+            a.topic = t
+            a.save()
 
 
 def job():
@@ -194,5 +217,5 @@ def job():
 def run(*args):
     try:
         job()
-    except:
+    except Exception as e:
         import pdb; pdb.set_trace()
