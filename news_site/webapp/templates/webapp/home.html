@@ -67,8 +67,8 @@
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sources<span class="caret"></span></a>
 		          <ul class="dropdown-menu dropdown-menu-form"> <!--fix single selection-->
-					<li><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' value='date'>&nbsp;Latest</li>
-					<li><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' value='hotness_score'>&nbsp;Hottest</li>
+					<li><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' id='date-radio' value='date'>&nbsp;Latest</li>
+					<li><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' id='hotness-radio' value='hotness_score'>&nbsp;Hottest</li>
 				  </ul>
 		        </li>
 		      </ul>

@@ -2,12 +2,20 @@ var myApp = angular.module('newsApp', ['infinite-scroll']);
 
 myApp.controller('HomeController', ['$scope', function($scope) {
   $scope.loginstatus = false;
-  $scope.username = '';
+
+  var lastUser = sessionStorage.getItem('lastUser')
+  if (lastUser == null) {
+    $scope.loginstatus = false;
+    $scope.user = {
+      username: "",
+      password: ""
+    };
+  } else {
+    $scope.user = {'username': lastUser}
+    loginSetUp();
+  }
   $scope.showDetails = true;
-  $scope.user = {
-  	username: "",
-  	password: ""
-  };
+  
   $scope.feed = [];
   $scope.shownFeed = [];
   $scope.count = 1;
@@ -26,16 +34,53 @@ myApp.controller('HomeController', ['$scope', function($scope) {
     'nbcnews': 'NBC News'
   };
 
+  $scope.login = function() { // This is like when you actually click the log in button and log in
+  	loginSetUp(); 
+    setPreferences();
+    $scope.httpGetAsync();
+  	$('#myModal').modal('toggle');
+  };
 
-  $scope.login = function() {
-  	$scope.loginstatus=true; //TODO: implement (or not)
-  	if($scope.user.username !== "" && $scope.user.password !== "") {
-  		$scope.welcome = 'Welcome, ' + $scope.user.username + '!';
+  function loginSetUp() { 
+    $scope.loginstatus=true; //TODO: implement (or not)
+    if($scope.user.username !== "" && $scope.user.password !== "") {
+      $scope.welcome = 'Welcome, ' + $scope.user.username + '!';
       $('.user-features').css('display', 'block');
-      $('#myModal').modal('toggle');
-  	}
-  	
+    }
 
+    sessionStorage.setItem('lastUser', $scope.user.username);
+  };
+
+  function setPreferences() {
+    var username = $scope.user.username;
+    if (sessionStorage.getItem(username + '-categories') != null) {
+
+      var cats = sessionStorage.getItem(username + '-categories').split(',');
+      $('.categories li input:checkbox').each(function () {
+        if (!cats.includes($(this).val())) {
+          this.checked = false;
+        } else {
+          this.checked = true;
+        }
+      });
+    }
+
+    if(sessionStorage.getItem(username + '-sources') != null) {
+      var sos = sessionStorage.getItem(username + '-sources').split(',');
+      $('.sources li input:checkbox').each(function () {
+        if (!sos.includes($(this).val())) {
+          this.checked = false;
+        } else {
+          this.checked = true;
+        }
+      });
+    }
+
+    if (sessionStorage.getItem(username + '-sortKey') == 'hotness_score') {
+      $('#hotness-radio').prop('checked', true);
+    } else {
+      $('#date-radio').prop('checked', true);
+    }
   };
 
   $scope.loadMore = function() {
@@ -53,6 +98,29 @@ myApp.controller('HomeController', ['$scope', function($scope) {
 
   $scope.selectedVal = function(name){
     $scope.$parent.val = name;
+  };
+  function getCategories() {
+    var categories = [];
+    $('.categories li input:checkbox:checked').each(function () {
+      console.log("hi");
+      var sThisVal = (this.checked ? $(this).val() : null);
+      if(sThisVal) {
+        categories.push(sThisVal);
+      }
+    });
+    return categories
+  };
+
+  function getSources() {
+    var sources = [];
+    $('.sources li input:checkbox:checked').each(function () {
+      console.log("hi");
+      var sThisVal = (this.checked ? $(this).val() : null);
+      if(sThisVal) {
+        sources.push(sThisVal);
+      }
+    });
+    return sources;
   };
 
     $scope.processTopic = function(topic, articles) {
@@ -119,23 +187,11 @@ myApp.controller('HomeController', ['$scope', function($scope) {
   };
 
     $scope.httpGetAsync = function() {
-        var categories = [];
-        $('.categories li input:checkbox:checked').each(function () {
-          console.log("hi");
-          var sThisVal = (this.checked ? $(this).val() : null);
-          if(sThisVal) {
-            categories.push(sThisVal);
-          }
-        });
-
-        var sources = [];
-        $('.sources li input:checkbox:checked').each(function () {
-          console.log("hi");
-          var sThisVal = (this.checked ? $(this).val() : null);
-          if(sThisVal) {
-            sources.push(sThisVal);
-          }
-        });
+        var categories = getCategories();
+        sessionStorage.setItem($scope.user.username + '-categories', categories);
+        var sources = getSources();
+        sessionStorage.setItem($scope.user.username + '-sources', sources);
+        sessionStorage.setItem($scope.user.username + '-sortKey', $scope.sortKey);
 
         url = "api/v1/articles/";
         $.ajax({
@@ -151,6 +207,7 @@ myApp.controller('HomeController', ['$scope', function($scope) {
     };
 
   $(document).ready(function() {
+    setPreferences();
     $scope.httpGetAsync();
   });
 
