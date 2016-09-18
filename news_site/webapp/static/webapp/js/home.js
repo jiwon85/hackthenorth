@@ -91,7 +91,7 @@ myApp.controller('HomeController', ['$scope', function($scope) {
   };
 
   $scope.loadSummary = function(index, topic) {
-    
+    topic.title = topic.articles[index].title;
     topic.summary = topic.articles[index].summary;
     topic.summarylink = topic.articles[index].article_url;
   };
