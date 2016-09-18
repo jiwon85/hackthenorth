@@ -24,6 +24,9 @@ a{
 .topic-summary {
 
     color: #494E6B;
+    font-size: 14px;
+    font-family: 'Pavanam', sans-serif;
+    font-size:15px;
 }
 
 .welcome-text {
@@ -61,6 +64,8 @@ ul.dropdown-menu li {
 
 .navbar {
 	margin-top: -2px;
+	font-family: 'Pavanam', sans-serif;
+	font-size:15px;
 }
 
 .topic-image {
@@ -88,4 +93,9 @@ ul.dropdown-menu li {
 }
 .selection{
 	font-weight: bold;
+}
+
+.navbar-brand {
+	font-family: 'Raleway', sans-serif;
+    font-size: 30px;
 }
