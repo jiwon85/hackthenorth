@@ -5,7 +5,7 @@ a{
 .feedBoard {
     margin-left: 10%;
     margin-right: 10%;
-    
+    padding-top: 60px;
 }
 
 .topic-item{
@@ -98,4 +98,9 @@ ul.dropdown-menu li {
 .navbar-brand {
 	font-family: 'Raleway', sans-serif;
     font-size: 30px;
+}
+
+.navbar {
+    position: fixed;
+    width: 100%;
 }
