@@ -32,9 +32,6 @@ myApp.controller('HomeController', ['$scope', function($scope) {
   };
 
   $scope.populateFeed = function(response) {
-    console.log(response);
-    response = JSON.parse(response);
-    console.log(response);
     console.log(response.length);
     for(i=0; i<response.length; i++) {
       topic = response[i];
@@ -50,18 +47,11 @@ myApp.controller('HomeController', ['$scope', function($scope) {
 
   };
 
-  $scope.httpGetAsync = function() {
+    $scope.httpGetAsync = function() {
         $scope.feed=[];
         $scope.shownFeed=[];
-        url = window.location+"api/v1/articles";
-        callback = $scope.populateFeed;
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function() { 
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-                callback(xmlHttp.responseText);
-        }
-        xmlHttp.open("GET", url, true); // true for asynchronous 
-        categories = [];
+
+        var categories = [];
         $('.categories li input:checkbox:checked').each(function () {
           console.log("hi");
           var sThisVal = (this.checked ? $(this).val() : null);
@@ -69,8 +59,8 @@ myApp.controller('HomeController', ['$scope', function($scope) {
             categories.push(sThisVal);
           }
         });
-        console.log(categories);
-        sources = [];
+
+        var sources = [];
         $('.sources li input:checkbox:checked').each(function () {
           console.log("hi");
           var sThisVal = (this.checked ? $(this).val() : null);
@@ -78,9 +68,19 @@ myApp.controller('HomeController', ['$scope', function($scope) {
             sources.push(sThisVal);
           }
         });
-        console.log(sources);
-        xmlHttp.send(JSON.stringify(categories), JSON.stringify(sources));
-  };
+
+        url = "api/v1/articles/";
+        $.ajax({
+            url: url,
+            data: {
+                categories: JSON.stringify(categories),
+                sources: JSON.stringify(sources),
+            },
+            success: function(response) {
+                $scope.populateFeed(response);
+            },
+        });
+    };
 
   $(document).ready(function() {
     $scope.httpGetAsync();
