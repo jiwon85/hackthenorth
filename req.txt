@@ -4,3 +4,7 @@ djangorestframework
 sumy
 scrapy
 ipython
+sklearn
+numpy
+scipy
+django-extensions
