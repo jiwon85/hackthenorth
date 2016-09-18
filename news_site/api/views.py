@@ -25,16 +25,23 @@ def get_articles(request):
 def _get_topic_articles(categories_filter, source_filter):
     # Do some filtering here with regard to categories
     topics = []
-    for topic in Topic.objects.filter(category_name__in=categories_filter).all():
+    for topic in Topic.objects.filter(category_name__in=categories_filter).distinct().all():
 
         articles = []
+        articles_source = {}
         for a in topic.articleinfo_set.filter(source__in=source_filter).all():
+            if a.source in articles_source:
+                continue
+            articles_source[a.source] = True
             articles.append(model_to_dict(a))
 
         if len(articles) == 0:
             continue
 
-        topic_list_tuple = (model_to_dict(topic), articles)
+        topic_dict = model_to_dict(topic)
+        topic_dict['hotness_score'] = len(articles)
+
+        topic_list_tuple = (topic_dict, articles)
         topics.append(topic_list_tuple)
     return topics
 
