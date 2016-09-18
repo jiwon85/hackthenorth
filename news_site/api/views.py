@@ -14,8 +14,15 @@ def get_articles(request):
 
 	topics = []	
 	for topic in Topic.objects.all():
-		topic_list_tuple = (serializers.serialize('json', [topic,]), serializers.serialize('json', ArticleInfo.objects.all()))
+		articles = []
+		for a in ArticleInfo.objects.all().filter(topic_id=topic):
+			articles.append(_model_to_dict(a))
+		topic_list_tuple = (_model_to_dict(topic), articles)
 		topics.append(topic_list_tuple)
+
+
+	# for a in ArticleInfo.objects.all():
+	# 	print(a.__dict__)
 
 	# arr = []
 	# for a in ArticleInfo.objects.all():
@@ -25,3 +32,7 @@ def get_articles(request):
 	
 	return JsonResponse(topics, safe=False)
 
+def _model_to_dict(model):
+	dic = model.__dict__
+	del dic['_state']
+	return dic

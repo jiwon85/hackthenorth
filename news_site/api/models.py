@@ -12,9 +12,10 @@ class ArticleInfo(models.Model):
 	article_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	topic_id = models.ForeignKey('Topic', on_delete=models.CASCADE)
 
-class Topic(models.Model):
 
+class Topic(models.Model):
 	topic_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	topic_name = models.CharField(max_length=50)
 	category_name = models.CharField(max_length=20)
 	hotness_score = models.SmallIntegerField(default=0)
+
