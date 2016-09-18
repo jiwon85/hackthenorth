@@ -1,5 +1,8 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
     brew install python3
+elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+    sudo apt-get install python-virtualenv
+    sudo apt-get install python3-pip
 fi
 
 pip3 install virtualenv
