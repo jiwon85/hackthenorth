@@ -1,7 +1,7 @@
 var myApp = angular.module('newsApp', ['infinite-scroll']);
 
 myApp.controller('HomeController', ['$scope', function($scope) {
-  $scope.loginstatus = 'notloggedin';
+  $scope.loginstatus = false;
   $scope.username = '';
   $scope.showDetails = true;
   $scope.user = {
@@ -13,16 +13,29 @@ myApp.controller('HomeController', ['$scope', function($scope) {
   $scope.count = 1;
 
   $scope.sortKey = 'hotness_score';
+  $scope.sourceMap = {
+    'cnn': 'CNN',
+    'yahoo': 'Yahoo',
+    'washingtonpost': 'Washington Post',
+    'huffingtonpost': 'Huffington Post',
+    'theguardian': 'The Guardian',
+    'wsj': 'WSJ',
+    'dailymail': 'Daily Mail',
+    'nytimes': 'NY Times',
+    'foxnews': 'Fox News',
+    'nbcnews': 'NBC News'
+  };
 
 
   $scope.login = function() {
-  	$scope.loginstatus='successfullogin'; //TODO: implement (or not)
-  	if($scope.user.username !== "") {
+  	$scope.loginstatus=true; //TODO: implement (or not)
+  	if($scope.user.username !== "" && $scope.user.password !== "") {
   		$scope.welcome = 'Welcome, ' + $scope.user.username + '!';
-  	} else {
-  		$scope.welcome = "?";
+      $('.user-features').css('display', 'block');
+      $('#myModal').modal('toggle');
   	}
-  	$('#myModal').modal('toggle');
+  	
+
   };
 
   $scope.loadMore = function() {
@@ -32,9 +45,19 @@ myApp.controller('HomeController', ['$scope', function($scope) {
     }
   };
 
+  $scope.loadSummary = function(index, topic) {
+    
+    topic.summary = topic.articles[index].summary;
+    topic.summarylink = topic.articles[index].article_url;
+  };
+
+  $scope.selectedVal = function(name){
+    $scope.$parent.val = name;
+  };
+
     $scope.processTopic = function(topic, articles) {
         // We pick information from articles in some order
-        var fields = ['video_url', 'image_url', 'date', 'image_url', 'summary', 'title'];
+        var fields = ['video_url', 'image_url', 'date', 'image_url', 'summary', 'title']; //two image_urls?
 
         for (var i = 0; i < articles.length; i++) {
             var article = articles[i];

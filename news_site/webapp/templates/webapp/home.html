@@ -3,9 +3,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-  	<title>NewsAlligator</title>
+  	<title>NewsFlash</title>
 
   	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  	<link href="{% static 'css_file_address' %}" rel="stylesheet" media="screen">
   	<script type='text/javascript' src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
 	<script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script type='text/javascript' src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -17,7 +18,7 @@
   </head>
   {% verbatim %}
   <body ng-app="newsApp">
-      <div ng-controller="HomeController" class='App' ng-style="{'background-color':'#ccc'}">
+      <div ng-controller="HomeController" class='App'>
 		<nav class="navbar navbar-default">
 		  <div class="container-fluid">
 		    <!-- Brand and toggle get grouped for better mobile display -->
@@ -28,12 +29,12 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">Brand</a>
+		      <a class="navbar-brand" href="#">NewsFlash</a>
 		    </div>
 
 		    <!-- Collect the nav links, forms, and other content for toggling -->
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-		      <ul class="nav navbar-nav">
+		      <ul class="nav navbar-nav user-features">
 		      	<li><span class="label label-default">Filter:</span></li> <!--fix align-->
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories<span class="caret"></span></a>
@@ -66,22 +67,21 @@
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sources<span class="caret"></span></a>
 		          <ul class="dropdown-menu dropdown-menu-form"> <!--fix single selection-->
-					<li><label><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' value='date'>&nbsp;Latest</label></li>
-					<li><label><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' value='hotness_score'>&nbsp;Hottest</label></li>
+					<li><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' value='date'>&nbsp;Latest</li>
+					<li><input type="radio" ng-change='httpGetAsync()' name="sortKey" ng-model='sortKey' value='hotness_score'>&nbsp;Hottest</li>
 				  </ul>
 		        </li>
 		      </ul>
 		      
 		      <ul class="nav navbar-nav navbar-right">
-		      	<li>{{ welcome }}</li> <!--fix align-->
+		      	<li><span class="welcome-text">{{ welcome }}</span></li> <!--fix align-->
+		      	<li><img class="welcome-img user-features" src="https://cdn0.iconfinder.com/data/icons/users-android-l-lollipop-icon-pack/24/user-128.png"/></li>
 		      	<li role="separator" class="divider"></li>
-		        <button type="button" class="btn btn-info btn-lg pull-right" data-toggle="modal" data-target="#myModal">Login</button>
+		        <button type="button" class="btn btn-info btn-default pull-right" data-toggle="modal" data-target="#myModal">{{loginstatus ? 'Logout' : 'Login'}}</button>
 		      </ul>
 		    </div><!-- /.navbar-collapse -->
 		  </div><!-- /.container-fluid -->
 		</nav>
-
- 		{{ welcome }} 
 		<!-- Modal -->
 		<div id="myModal" class="modal fade" role="dialog">
 		  <div class="modal-dialog">
@@ -89,7 +89,7 @@
 		    <div class="modal-content">
 		      <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal">&times;</button>
-		        <h4 class="modal-title">Modal Header</h4>
+		        <h4 class="modal-title">Login to NewsFlash</h4>
 		      </div>
 		      <div class="modal-body">
 		         <form>
@@ -120,10 +120,14 @@
                     <img src={{topic.image_url}} width="150">
                   </div>
                   <div class='topic-details'>
-                      <div class='topic-summary'>{{topic.summary}}</div>
+                      <div class='topic-summary'>
+                      	{{topic.summary}}
+                      	<a href={{topic.summarylink}} target="_blank"><span class="glyphicon glyphicon-share" ng-show="topic.summarylink != null" aria-hidden="true"></span></a>
+                      </div>
+
                       <p>
-                        From:
-                        <span ng-repeat="article in topic.articles">{{article.source}} </span>
+                        From: | 
+                        <span ng-repeat="article in topic.articles"><a href='' ng-class="{'selection': $parent.val == article.id}" ng-click="selectedVal(article.id); loadSummary($index, topic)">{{sourceMap[article.source]}}</a> | </span>
                     </p>
                   </div>
               </div>
