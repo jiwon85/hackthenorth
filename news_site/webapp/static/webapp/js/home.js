@@ -24,7 +24,6 @@ myApp.controller('HomeController', ['$scope', function($scope) {
   };
 
   $scope.loadMore = function() {
-    //make api call to load more
     if($scope.count<=$scope.feed.length){
       $scope.shownFeed.push($scope.feed[$scope.count]);
       $scope.count++;
@@ -40,10 +39,14 @@ myApp.controller('HomeController', ['$scope', function($scope) {
       console.log("articles length " + articles.length);
       $scope.feed.push(articles);
     }
-    if($scope.feed.length > 0) {
-      $scope.shownFeed.push($scope.feed[0]);
-      $scope.$apply();
+    limit = Math.min(10, $scope.feed.length);
+    counter = 0;
+    while(counter<limit) {
+      $scope.shownFeed.push($scope.feed[counter]);
+      counter++;
     }
+    $scope.count = counter;
+    $scope.$apply();
 
   };
 
